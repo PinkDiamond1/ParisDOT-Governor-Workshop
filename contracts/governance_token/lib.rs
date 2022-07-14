@@ -3,27 +3,24 @@
 
 #[openbrush::contract]
 pub mod governance_token {
+    use openbrush::contracts::psp22::extensions::metadata::*;
     use ink_prelude::string::String;
     use ink_storage::traits::SpreadAllocate;
-    use openbrush::{
-        contracts::psp22::extensions::metadata::*,
-        traits::Storage,
-    };
 
     #[ink(storage)]
-    #[derive(Default, SpreadAllocate, Storage)]
-    pub struct Contract {
-        #[storage_field]
-        psp22: psp22::Data,
-        #[storage_field]
-        metadata: metadata::Data,
+    #[derive(Default, SpreadAllocate, PSP22Storage, PSP22MetadataStorage)]
+    pub struct MyPSP22 {
+        #[PSP22StorageField]
+        psp22: PSP22Data,
+        #[PSP22MetadataStorageField]
+        metadata: PSP22MetadataData,
     }
 
-    impl PSP22 for Contract {}
+    impl PSP22 for MyPSP22 {}
 
-    impl PSP22Metadata for Contract {}
+    impl PSP22Metadata for MyPSP22 {}
 
-    impl Contract {
+    impl MyPSP22 {
         #[ink(constructor)]
         pub fn new(total_supply: Balance) -> Self {
             ink_lang::codegen::initialize_contract(|instance: &mut Self| {
