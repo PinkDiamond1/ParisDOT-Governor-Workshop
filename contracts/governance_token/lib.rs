@@ -27,9 +27,9 @@ pub mod governance_token {
         #[ink(constructor)]
         pub fn new(total_supply: Balance) -> Self {
             ink_lang::codegen::initialize_contract(|instance: &mut Self| {
-                instance.metadata.name = name;
-                instance.metadata.symbol = symbol;
-                instance.metadata.decimals = decimal;
+                instance.metadata.name = Some(String::from("GOV TOKEN"));
+                instance.metadata.symbol = Some(String::from("GOV"));
+                instance.metadata.decimals = 18;
                 instance
                     ._mint(instance.env().caller(), total_supply)
                     .expect("Should mint total_supply");
