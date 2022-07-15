@@ -35,6 +35,7 @@ pub mod governor {
         VotePeriodNotEnded,
         QuorumNotReached,
         TransferError,
+        ProposalNotAccepted,
     }
 
     #[derive(Encode, Decode, SpreadLayout, PackedLayout, SpreadAllocate, Default)]
@@ -151,6 +152,9 @@ pub mod governor {
             let proposal_vote = self.proposal_votes.get(proposal_id).unwrap_or_default();
             if proposal_vote.for_votes + proposal_vote.against_votes < self.quorum {
                 return Err(GovernorError::QuorumNotReached)
+            }
+            if proposal_vote.against_votes >= proposal_vote.for_votes {
+                return Err(GovernorError::ProposalNotAccepted)
             }
 
             proposal.executed = true;
