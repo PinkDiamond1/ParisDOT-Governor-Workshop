@@ -145,10 +145,6 @@ pub mod governor {
             if proposal.executed {
                 return Err(GovernorError::ProposalAlreadyExecuted)
             }
-            let now = self.env().block_timestamp();
-            if proposal.vote_end <= now {
-                return Err(GovernorError::VotePeriodNotEnded)
-            }
             let proposal_vote = self.proposal_votes.get(proposal_id).unwrap_or_default();
             if proposal_vote.for_votes + proposal_vote.against_votes < self.quorum {
                 return Err(GovernorError::QuorumNotReached)
