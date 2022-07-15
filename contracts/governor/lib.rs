@@ -111,7 +111,7 @@ pub mod governor {
                 return Err(GovernorError::ProposalAlreadyExecuted)
             }
             let now = self.env().block_timestamp();
-            if proposal.vote_end > now {
+            if now > proposal.vote_end {
                 return Err(GovernorError::VotePeriodEnded)
             }
             if self.votes.get(&(proposal_id, caller)).is_some() {
@@ -162,13 +162,13 @@ pub mod governor {
         }
 
         #[ink(message)]
-        pub fn get_proposal(&self, proposal_id: u32) -> Option<Proposal> {
-            self.proposals.get(&proposal_id)
+        pub fn get_proposal_vote(&self, proposal_id: ProposalId) -> Option<ProposalVote> {
+            self.proposal_votes.get(proposal_id)
         }
 
         #[ink(message)]
-        pub fn get_proposal_default(&self, proposal_id: u32) -> Proposal {
-            self.proposals.get(&proposal_id).unwrap_or_default()
+        pub fn get_proposal(&self, proposal_id: u32) -> Option<Proposal> {
+            self.proposals.get(proposal_id)
         }
 
         #[ink(message)]
@@ -179,7 +179,7 @@ pub mod governor {
         fn account_weight(&self, caller: AccountId) -> u8 {
             let balance = PSP22Ref::balance_of(&self.governance_token, caller);
             let total_supply = PSP22Ref::total_supply(&self.governance_token);
-            (balance / total_supply) as u8 * 100u8
+            (balance * 100 / total_supply) as u8
         }
 
         fn next_proposal_id(&mut self) -> ProposalId {
